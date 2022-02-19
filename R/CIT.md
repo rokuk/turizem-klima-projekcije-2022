@@ -170,9 +170,9 @@ for (stat_id in gridpoint_indexes) {
 
         p <- plotdata(stat_id, scen, all_cit_data)
         
-        ggsave(paste("nobars_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste("nobars_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste("nobars_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste(gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
+        ggsave(paste(gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
+        ggsave(paste(gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
     }
 }
 ```

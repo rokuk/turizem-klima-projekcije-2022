@@ -76,6 +76,8 @@ ggplot(mapdata) +
     geom_sf() +
     coord_sf(xlim=c(7, 21), ylim=c(42, 50)) + 
     geom_point(data=grid, mapping = aes(lon, lat), size=0.2) +
+    xlab("longitude") +
+    ylab("latitude") +
     theme_dark()
 ```
 
@@ -137,6 +139,8 @@ ggplot(mapdata) +
     geom_point(data=grid, mapping = aes(lon, lat), size=0.2) +
     geom_point(data=stationcoords, mapping = aes(lon, lat), color="#FF3000") +
     geom_point(data=chosen_gridpoints, mapping = aes(lon, lat), color="#0062FF") +
+    xlab("longitude") +
+    ylab("latitude") +
     theme_dark()
 ```
 
