@@ -34,7 +34,7 @@ grid <- transform_coords(netcdfdata)
 
 Plot june data centered on Slovenia, to check if we have selected the right rlon, rlat range:
 
-```{r}
+```{r, dpi=300}
 image(netcdfdata$rlon, netcdfdata$rlat, netcdfdata$data[,,6])
 ```
 
@@ -42,7 +42,7 @@ image(netcdfdata$rlon, netcdfdata$rlat, netcdfdata$data[,,6])
 
 Plot map and a part of the model's grid:
 
-```{r}
+```{r, dpi=300}
 ggplot(mapdata) +
     geom_sf() +
     coord_sf(xlim=c(7, 21), ylim=c(42, 50)) + 
@@ -75,7 +75,7 @@ print(chosen_gridpoints)
 
 Plot map of Slovenia, model grid (black), selected stations (red) and selected grid points (blue):
 
-```{r}
+```{r, dpi=300}
 ggplot(mapdata) +
     geom_sf() +
     coord_sf(xlim=c(13.1, 16.6), ylim=c(45.3, 47)) + 
