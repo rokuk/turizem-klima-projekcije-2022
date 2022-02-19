@@ -1,0 +1,11 @@
+.Rhistory
+.Rproj.user
+.idea
+*.Rproj
+*_cache
+*_files
+BFUL-notes/
+data/
+docs/
+output/
+seznam izracunov.xlsx

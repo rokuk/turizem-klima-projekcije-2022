@@ -1,0 +1,86 @@
+---
+title: "CIT-HCI-gridpoints"
+output: github_document
+---
+
+We need the coordinates of the model's grid (near the locations we are interested in) to extract data from netcdf files.
+
+## Importing libraries and data
+
+Import libraries and source functions from `processing/common.R`:
+
+```{r}
+source("common.R", local = knitr::knit_global())
+
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+```
+
+Download data for maps:
+
+```{r}
+mapdata <- ne_load(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "geodata")
+# map data can be redownloaded to the geodata folder using:
+# mapdata <- ne_download(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "/geodata")
+```
+
+Read one file to get the model's grid:
+
+```{r}
+netcdfdata <- readcdf("../data/CIT/RCP4.5/mean/C3S422Lot2TEC_day-fair-cit-month-proj_mean_monthly_2021_2040_v1.nc", "day-fair-cit-month-proj")
+grid <- transform_coords(netcdfdata)
+```
+
+Plot june data centered on Slovenia, to check if we have selected the right rlon, rlat range:
+
+```{r}
+image(netcdfdata$rlon, netcdfdata$rlat, netcdfdata$data[,,6])
+```
+
+## Selected points
+
+Plot map and a part of the model's grid:
+
+```{r}
+ggplot(mapdata) +
+    geom_sf() +
+    coord_sf(xlim=c(7, 21), ylim=c(42, 50)) + 
+    geom_point(data=grid, mapping = aes(lon, lat), size=0.2) +
+    theme_dark()
+```
+
+Import coordinates of the stations we are interested in:
+
+```{r}
+stationcoords <- read.csv("../data/stations.csv")
+print(stationcoords)
+```
+
+We manually choose points on the grid nearest to each station (where possible). The chosen points:
+
+```{r}
+names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Novo mesto", "Celje", "Slovenj Gradec", "Maribor", "Murska Sobota")
+gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347)
+
+chosen_gridpoints <- data.frame(
+    station_name = names,
+    point_index = gridpoint_indexes,
+    lon = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% select(lon),
+    lat = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% select(lat)
+)
+
+print(chosen_gridpoints)
+```
+
+Plot map of Slovenia, model grid (black), selected stations (red) and selected grid points (blue):
+
+```{r}
+ggplot(mapdata) +
+    geom_sf() +
+    coord_sf(xlim=c(13.1, 16.6), ylim=c(45.3, 47)) + 
+    geom_point(data=grid, mapping = aes(lon, lat), size=0.2) +
+    geom_point(data=stationcoords, mapping = aes(lon, lat), color="#FF3000") +
+    geom_point(data=chosen_gridpoints, mapping = aes(lon, lat), color="#0062FF") +
+    theme_dark()
+```
