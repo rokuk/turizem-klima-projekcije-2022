@@ -1,7 +1,6 @@
 .Rhistory
 .Rproj.user
 .idea
-*.Rproj
 *_cache
 BFUL-notes/
 data/
