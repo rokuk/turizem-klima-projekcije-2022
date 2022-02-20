@@ -106,7 +106,7 @@ assembledata <- function(quantity) {
                     
                     print(paste(scenario, time_period, metric, day_cat))
                     
-                    filepath <- paste("../data/CIT/", scenario, "/", metric, "/C3S422Lot2TEC_day-" , day_cat, "-", quantity, "-month-proj_", metric, "_monthly_", time_period, "_v1.nc", sep = "")
+                    filepath <- paste("../data/", quantity, "/", scenario, "/", metric, "/C3S422Lot2TEC_day-" , day_cat, "-", quantity, "-month-proj_", metric, "_monthly_", time_period, "_v1.nc", sep = "")
                     datavarname <- paste("day-", day_cat, "-", quantity, "-month-proj", sep="")
                     
                     dataset <- readcdf(filepath, datavarname) %>% transform_coords %>% filter(id %in% gridpoint_indexes)
@@ -153,7 +153,8 @@ adderrorbars <- function(subset) {
     return (rbind(means_fair, means_good, means_unf))
 }
 
-"A function to plot data for specific point (`stat_id`) and scenario (`scen`)"
+"A function to plot data for specific point (`stat_id`) and scenario (`scen`). 
+To produce figures without errorbars, comment the line with `geom_errorbar()`."
 plotdata <- function(stat_id, scen, alldata) {
     subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars()
     
