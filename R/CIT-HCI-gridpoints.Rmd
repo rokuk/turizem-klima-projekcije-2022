@@ -17,7 +17,7 @@ library(sf)
 library(rnaturalearth)
 ```
 
-Download data for maps:
+Load country shape data for maps:
 
 ```{r}
 mapdata <- ne_load(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "geodata")
