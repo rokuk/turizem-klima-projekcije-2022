@@ -3,7 +3,10 @@
 .idea
 *_cache
 BFUL-notes/
-data/
+data/cit
+data/hci
+data/arso
+data/snow
 docs/
 seznam izracunov.xlsx
 R/geodata/
