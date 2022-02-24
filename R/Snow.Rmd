@@ -102,7 +102,7 @@ variables <- c("sd-days-5-NS", "sd-days-30-NS", "snowfall-amount-winter", "wbt-2
 # variable name used in netcdf file for each of the above variables:
 datavarnames <- c("sd_days", "sd_days", "snowfall_amount", "wbt_hrs", "wbt_hrs")
 # name of variables for plotting:
-plotvarnames <- c("Days with at least 5 cm of natural snow", "Days with at least 30 cm of natural snow", "Snowfall precipitation from November to April (included)", "Potential snowmaking hours in November and December (WBT < -2\u00B0C)", "Potential snowmaking hours in November and December (WBT < -5\u00B0C)")
+plotvarnames <- c("Days with at least 5 cm of natural snow from August to July", "Days with at least 30 cm of natural snow from August to July", "Snowfall precipitation from November to April", "Potential snowmaking hours in November and December (WBT < -2\u00B0C)", "Potential snowmaking hours in November and December (WBT < -5\u00B0C)")
 # labels for y axis for each variable:
 yaxislabels <- c("number of days", "number of days", "cumulative snowfall [mm]", "number of hours", "number of hours")
 
