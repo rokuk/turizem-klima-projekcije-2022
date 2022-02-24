@@ -22,7 +22,7 @@ Load country shape data for maps:
 ```{r}
 mapdata <- ne_load(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "geodata")
 # map data can be redownloaded to the geodata folder using:
-# mapdata <- ne_download(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "/geodata")
+# mapdata <- ne_download(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "geodata")
 ```
 
 Read one file to get the model's grid:

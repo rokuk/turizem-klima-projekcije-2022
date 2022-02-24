@@ -82,9 +82,11 @@ assembledata <- function(quantity) {
             
             print(paste("historical", "1986_2005", metric, day_cat))
             
+            # construct path of netcdf file
             filepath <- paste("../data/", quantity, "/historical/", metric, "/C3S422Lot2TEC_day-" , day_cat, "-", quantity, "-month-proj_", metric, "_monthly_1986_2005_v1.nc", sep = "")
             datavarname <- paste("day-", day_cat, "-", quantity, "-month-proj", sep="")
             
+            # read and process data, select only datapoints for our gridpoints
             dataset <- readcdf(filepath, datavarname) %>% transform_coords() %>% filter(id %in% gridpoint_indexes)
             
             alldata <- rbind(alldata, data.frame(
