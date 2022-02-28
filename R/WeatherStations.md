@@ -1,6 +1,9 @@
 Weather stations
 ================
 
+This code reads data from Excel files (received from ARSO) and makes
+plots for selected stations.
+
 ## Importing libraries and data
 
 ``` r

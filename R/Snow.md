@@ -1,6 +1,12 @@
 Snow
 ================
 
+This code reads data from netcdf files (downloaded from
+[CDS](https://cds.climate.copernicus.eu/cdsapp#!/dataset/sis-tourism-snow-indicators?tab=overview))
+and makes plots for selected ski resorts.
+
+## Importing libraries and data
+
 ``` r
 library(ncdf4)
 library(dplyr)
@@ -31,8 +37,9 @@ library(rnaturalearth)
 library(ggrepel)
 ```
 
-Read data from NUTS-3 geopackage (borders between regions). Downloaded
-from auxillary files at
+The dataset provides snow indicators at the scale of NUTS-3 regions.
+Read data from NUTS-3 geopackage (borders between regions). The file was
+downloaded from auxillary files at
 [CDS](https://cds.climate.copernicus.eu/cdsapp#!/dataset/sis-tourism-snow-indicators?tab=doc).
 
 ``` r
