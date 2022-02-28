@@ -28,25 +28,6 @@ library(sf)
 
 ``` r
 library(rnaturalearth)
-library(plotly) # remove
-```
-
-    ## 
-    ## Attaching package: 'plotly'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     last_plot
-
-    ## The following object is masked from 'package:stats':
-    ## 
-    ##     filter
-
-    ## The following object is masked from 'package:graphics':
-    ## 
-    ##     layout
-
-``` r
 library(ggrepel)
 ```
 
@@ -180,10 +161,12 @@ variables <- c("sd-days-5-NS", "sd-days-30-NS", "snowfall-amount-winter", "wbt-2
 # variable name used in netcdf file for each of the above variables:
 datavarnames <- c("sd_days", "sd_days", "snowfall_amount", "wbt_hrs", "wbt_hrs")
 # name of variables for plotting:
-plotvarnames <- c("Days with at least 5 cm of natural snow from August to July", "Days with at least 30 cm of natural snow from August to July", "Snowfall precipitation from November to April", "Potential snowmaking hours in November and December (WBT < -2\u00B0C)", "Potential snowmaking hours in November and December (WBT < -5\u00B0C)")
+plotvarnames <- c("Days with at least 5 cm of natural snow from August to July", "Days with at least 30 cm of natural snow from August to July", "Snowfall precipitation from November to April", "Potential snowmaking hours in November and December (WBT <= -2\u00B0C)", "Potential snowmaking hours in November and December (WBT <= -5\u00B0C)")
 # labels for y axis for each variable:
 yaxislabels <- c("number of days", "number of days", "cumulative snowfall [mm]", "number of hours", "number of hours")
 ```
+
+Read data from netcdf files:
 
 ``` r
 alldata <- data.frame(matrix(ncol = 7, nrow = 0)) # create empty dataframe
@@ -518,16 +501,16 @@ plotdata3 <- function(scen, var, data_at_skiresorts) {
     data_plot$height <- fct_relabel(data_plot$height, ~ paste(.x, "m"))
 
     p <- ggplot(data_plot, aes(x = height, y = prct50, fill = time_period)) +
-        geom_col(position = position_dodge2(width = 1, preserve = "single")) +
-        #geom_col(position = "dodge") +
+        geom_col(position = position_dodge2(preserve = "single"), width=0.9) +
         facet_grid(~name, scales="free") +
         scale_fill_manual(values = c("#009E73", "#E69F00", "#56B4E9", "#D55E00")) +
-        labs(title = plotvarnames[match(var, variables)], subtitle = scen, fill="Period") +
+        scale_y_continuous(expand = expansion(mult = c(0, 0.02))) +
+        labs(title = plotvarnames[match(var, variables)], subtitle = scen, fill="period") +
         xlab("height") + 
         ylab(yaxislabels[match(var, variables)]) +
         guides(x = guide_axis(angle = 90)) +
-        geom_errorbar(mapping = aes(ymax=upper, ymin=lower), stat="identity", size=0.3, width=0.9, position = position_dodge2(preserve = "single"))
-        #scale_colour_manual(values = c("#005E43", "#866F00", "#266489", "#852E00"), guide="none") # errorbar color
+        geom_errorbar(mapping = aes(ymax=upper, ymin=lower), stat="identity", size=0.3, width=0.9, position = position_dodge2(preserve = "single")) + 
+        theme(panel.grid.major.x = element_blank())
         
     return (p)
 }
@@ -563,3 +546,19 @@ for (var in variables) {
 ```
 
 ![](Snow_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-3.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-4.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-5.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-6.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-7.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-8.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-9.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-10.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-11.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-12.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-13.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-14.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-15.png)<!-- -->
+
+Save all the plots:
+
+``` r
+for (scen in scenarios) {
+    for (var in variables) {
+        print(paste(scen, var))
+
+        p <- plotdata3(scen, var, data_at_skiresorts)
+        
+        ggsave(paste("snow_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output", device=cairo_pdf)
+        ggsave(paste("snow_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output", device=cairo_ps)
+        ggsave(paste("snow_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output", dpi=500)
+    }
+}
+```

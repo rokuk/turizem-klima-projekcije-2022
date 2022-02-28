@@ -1,9 +1,9 @@
-# this script defines some commonly used functions
+# this script defines some commonly used functions for CIT and HCI
 
 library(ncdf4)
 library(dplyr)
 
-month_names = c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "okt", "nov", "dec")
+month_names = c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
 scenarios <- c("RCP2.6", "RCP4.5", "RCP8.5")
 time_periods <- c("2021_2040", "2041_2060", "2081_2100")
 day_categories <- c("fair", "good", "unf")

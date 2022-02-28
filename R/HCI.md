@@ -166,13 +166,13 @@ Save all the plots:
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
-        print(paste(stat_name, scen))
+        print(paste("HCI", stat_name, scen))
 
         p <- plotdata(stat_id, scen, all_hci_data)
         
-        ggsave(paste(gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste(gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste(gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
     }
 }
 ```

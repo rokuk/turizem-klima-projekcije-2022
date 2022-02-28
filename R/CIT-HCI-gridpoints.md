@@ -34,21 +34,21 @@ library(sf)
 library(rnaturalearth)
 ```
 
-Download data for maps:
+Load country shape data for maps:
 
 ``` r
 mapdata <- ne_load(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "geodata")
 ```
 
     ## OGR data source with driver: ESRI Shapefile 
-    ## Source: "/Users/rokuk/Documents/Work/BFUL/Turizem-članek/R/geodata", layer: "ne_10m_admin_0_countries"
+    ## Source: "/Users/rokuk/Documents/Work/BFUL/Turizem-projekcije/R/geodata", layer: "ne_10m_admin_0_countries"
     ## with 258 features
     ## It has 161 fields
     ## Integer64 fields read as strings:  NE_ID
 
 ``` r
 # map data can be redownloaded to the geodata folder using:
-# mapdata <- ne_download(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "/geodata")
+# mapdata <- ne_download(scale = 10, type = 'countries', category = 'cultural', returnclass = "sf", destdir = "geodata")
 ```
 
 Read one file to get the model’s grid:
