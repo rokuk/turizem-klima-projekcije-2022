@@ -11,11 +11,8 @@ selected stations.
 ```{r}
 library(readxl)
 library(dplyr)
-library(purrr)
 library(forcats)
 library(ggplot2)
-library(sf)
-library(rnaturalearth)
 ```
 
 Define variable values:
@@ -27,6 +24,9 @@ axislabels <- c("number of days per month", "number of days per month", "number 
 projnames <- c("RCP45", "RCP85", "RCP26") # excel sheet names
 scenarionames <- c("RCP4.5", "RCP8.5", "RCP2.6") # display scenario names
 monthnames <- c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+stationnames_raw <- c("BILJE", "CELJE - MEDLOG", "LETALIŠČE EDVARDA RUSJANA MARIBOR", "LJUBLJANA - BEŽIGRAD", "MURSKA SOBOTA - RAKIČAN", "NOVO MESTO", "PORTOROŽ - LETALIŠČE", "RATEČE", "CERKLJE - LETALIŠČE", "ŠMARTNO PRI SLOVENJ GRADCU")
+stationnames_1 <- c("Bilje", "Celje - Medlog", "Letališče Edvarda Rusjana Maribor", "Ljubljana - Bežigrad", "Murska Sobota - Rakičan", "Novo mesto", "Portorož - letališče", "Rateče", "Cerklje - letališče", "Šmartno pri Slovenj Gradcu")
+stationnames_2 <- c("Bilje", "Celje Medlog", "Letališče Edvarda Rusjana Maribor", "Ljubljana Bežigrad", "Murska Sobota Rakičan", "Novo mesto", "Portorož letališče", "Rateče", "Cerklje letališče", "Šmartno pri Slovenj Gradcu")
 ```
 
 Read data from Excel files:
@@ -88,11 +88,12 @@ for (i in 1:nrow(projdata)) {
 projdata$median <- projdata$median + refvals
 projdata$min <- projdata$min + refvals
 projdata$max <- projdata$max + refvals
+projdata[projdata$min < 0,"min"] <- 0 # set all negative values of minimum values to zero
 
 head(projdata)
 ```
 
-Combine reference and projection data frames for plotting, also rename stations:
+Combine reference and projection data frames for plotting:
 
 ```{r}
 alldata <- data.frame(matrix(nrow=0, ncol=8))
@@ -109,16 +110,6 @@ refdata$scenario <- "RCP8.5"
 alldata <- rbind(alldata, refdata)
 refdata$scenario <- "RCP2.6"
 alldata <- rbind(alldata, refdata)
-
-alldata[alldata$station=="BILJE", "station"] <- "Bilje"
-alldata[alldata$station=="CELJE - MEDLOG", "station"] <- "Celje Medlog"
-alldata[alldata$station=="LETALIŠČE EDVARDA RUSJANA MARIBOR", "station"] <- "Letališče Edvarda Rusjana Maribor"
-alldata[alldata$station=="LJUBLJANA - BEŽIGRAD", "station"] <- "Ljubljana Bežigrad"
-alldata[alldata$station=="MURSKA SOBOTA - RAKIČAN", "station"] <- "Murska Sobota Rakičan"
-alldata[alldata$station=="NOVO MESTO", "station"] <- "Novo mesto"
-alldata[alldata$station=="PORTOROŽ - LETALIŠČE", "station"] <- "Portorož letališče"
-alldata[alldata$station=="RATEČE", "station"] <- "Rateče"
-alldata[alldata$station=="ŠMARTNO PRI SLOVENJ GRADCU", "station"] <- "Šmartno pri Slovenj Gradcu"
 ```
 
 ## Plots
@@ -126,7 +117,11 @@ alldata[alldata$station=="ŠMARTNO PRI SLOVENJ GRADCU", "station"] <- "Šmartno 
 ```{r}
 plotdata <- function(alldata, variable, stat) {
     subset <- filter(alldata, var==variable & station==stat)
-
+    
+    for (n in 1:length(stationnames_raw)) {
+        subset[subset$station==stationnames_raw[n], "station"] <- stationnames_1[n]
+    }
+    
     p <- ggplot(data = subset, 
                 mapping = aes(x = period, y = median, fill = period)) + 
         geom_col() +
@@ -134,7 +129,7 @@ plotdata <- function(alldata, variable, stat) {
         scale_fill_manual(values = c("#009E73", "#E69F00", "#56B4E9", "#D55E00")) +
         scale_y_continuous(expand = expansion(mult = c(0, 0.02))) +
         ylab(axislabels[match(variable, filenames)]) + 
-        labs(title = variablenames[match(variable, filenames)], subtitle = stat, fill="period") +
+        labs(title = variablenames[match(variable, filenames)], subtitle = stationnames_1[match(stat, stationnames_raw)], fill="period") +
         geom_errorbar(mapping = aes(ymax=max, ymin=min), stat="identity", size=0.3, width=0.9) +
         theme(panel.grid.major.x = element_blank(),
               axis.title.x=element_blank(),
@@ -146,7 +141,11 @@ plotdata <- function(alldata, variable, stat) {
 
 plotdata2 <- function(alldata, variable, scen) {
     subset <- filter(alldata, var==variable & scenario==scen)
-
+    
+    for (m in 1:length(stationnames_raw)) {
+        subset[subset$station==stationnames_raw[m], "station"] <- stationnames_2[m]
+    }
+    
     p <- ggplot(data = subset, 
                 mapping = aes(x = period, y = median, fill = period)) + 
         geom_col() +
@@ -165,11 +164,11 @@ plotdata2 <- function(alldata, variable, scen) {
     return (p)
 }
 
-#plotdata(alldata, "rr1", "Rateče")
+#plotdata(alldata, "snow", "CELJE - MEDLOG")
 #plotdata2(alldata, "snow", "RCP4.5")
 ```
 
-```{r, dpi=300, fig.width=8, fig.height=4}
+```{r, fig.width=8, fig.height=4, dev='svg'}
 for (var in filenames) {
     for (stat in distinct(alldata, station)$station) {
         p <- plotdata(alldata, var, stat)
@@ -178,7 +177,7 @@ for (var in filenames) {
 }
 ```
 
-```{r, dpi=300, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8, dev='svg'}
 for (var in filenames) {
     for (scen in c("RCP2.6", "RCP4.5", "RCP8.5")) {
         p <- plotdata2(alldata, var, scen)
@@ -191,14 +190,30 @@ Save all the plots:
 
 ```{r, eval=FALSE}
 for (var in filenames) {
-    for (stat in distinct(alldata, station)$station) {
-        print(paste(var, stat))
+    for (stat_name in distinct(alldata, station)$station) {
+        print(paste(var, stat_name))
 
-        p <- plotdata(alldata, var, stat)
+        p <- plotdata(alldata, var, stat_name)
         
-        ggsave(paste("stations_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste("stations_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste("stations_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/arso", device=cairo_pdf)
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/arso", device=cairo_ps)
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/arso")
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/arso", dpi=500)
+    }
+}
+```
+
+```{r, eval=FALSE}
+for (var in filenames) {
+    for (scen in c("RCP2.6", "RCP4.5", "RCP8.5")) {
+        print(paste(scen, var))
+
+        p <- plotdata2(alldata, var, scen)
+        
+        ggsave(paste("arso2_", scen, "_", var, ".pdf", sep=""), p, width=8, height=8, units="in", path="../output/pdf/arso", device=cairo_pdf)
+        ggsave(paste("arso2_", scen, "_", var, ".eps", sep=""), p, width=8, height=8, units="in", path="../output/eps/arso", device=cairo_ps)
+        ggsave(paste("arso2_", scen, "_", var, ".svg", sep=""), p, width=8, height=8, units="in", path="../output/svg/arso")
+        ggsave(paste("arso2_", scen, "_", var, ".png", sep=""), p, width=8, height=8, units="in", path="../output/png/arso", dpi=500)
     }
 }
 ```

@@ -2,15 +2,18 @@
 
 library(ncdf4)
 library(dplyr)
+library(ggplot2)
+library(scales)
 
 month_names = c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+month_days = c(31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) # february is a special case, see `assembledata()`
 scenarios <- c("RCP2.6", "RCP4.5", "RCP8.5")
 time_periods <- c("2021_2040", "2041_2060", "2081_2100")
 day_categories <- c("fair", "good", "unf")
 metrics <- c("mean", "10prct", "90prct")
 
 names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Novo mesto", "Celje", "Slovenj Gradec", "Maribor", "Murska Sobota")
-gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347) # these points of the grid are manualy chosen, see CIT-HCI-gridpoints file in plotting folder
+gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347) # these points of the grid are manualy chosen, see CIT-HCI-gridpoints file
 
 "The datasets downloaded from CDS are saved in netcdf files. We define a 
 function that opens the file, reads longitude, latitude, rotated longitude, 
@@ -70,6 +73,32 @@ transform_coords <- function(netcdfdata) {
     ))
 }
 
+"A function to calculate min and max y position for errorbars in a stacked barplot"
+adderrorbars <- function(subset) {
+    means <- subset[subset$metric=="mean",]
+    prct10 <- subset[subset$metric=="10prct",]
+    prct90 <- subset[subset$metric=="90prct",]
+    means$prct10 <- prct10$datapoint
+    means$prct90 <- prct90$datapoint
+    
+    means_fair.mean <- filter(means, day_cat=="fair")$datapoint
+    means_good.mean <- filter(means, day_cat=="good")$datapoint
+    
+    means_good <- filter(means, day_cat == "good") %>%
+        mutate(lower = prct10,
+               upper = prct90)
+    
+    means_fair <- filter(means, day_cat == "fair") %>%
+        mutate(lower = means_good.mean + prct10,
+               upper = means_good.mean + prct90)
+    
+    means_unf <- filter(means, day_cat == "unf") %>%
+        mutate(lower = means_fair.mean + means_good.mean + prct10,
+               upper = means_fair.mean + means_good.mean + prct90)
+    
+    return (rbind(means_fair, means_good, means_unf))
+}
+
 "Read data from all netcdf files at selected grid points and assemble it into a 
 single dataframe (`alldata`) for plotting. Grid points are the same for all datasets.
 Parameter `quantity` is either 'cit' or 'hci'."
@@ -87,7 +116,9 @@ assembledata <- function(quantity) {
             datavarname <- paste("day-", day_cat, "-", quantity, "-month-proj", sep="")
             
             # read and process data, select only datapoints for our gridpoints
-            dataset <- readcdf(filepath, datavarname) %>% transform_coords() %>% filter(id %in% gridpoint_indexes)
+            dataset <- readcdf(filepath, datavarname) %>% 
+                transform_coords %>% 
+                filter(id %in% gridpoint_indexes)
             
             alldata <- rbind(alldata, data.frame(
                 stationid=dataset$id, 
@@ -111,7 +142,9 @@ assembledata <- function(quantity) {
                     filepath <- paste("../data/", quantity, "/", scenario, "/", metric, "/C3S422Lot2TEC_day-" , day_cat, "-", quantity, "-month-proj_", metric, "_monthly_", time_period, "_v1.nc", sep = "")
                     datavarname <- paste("day-", day_cat, "-", quantity, "-month-proj", sep="")
                     
-                    dataset <- readcdf(filepath, datavarname) %>% transform_coords %>% filter(id %in% gridpoint_indexes)
+                    dataset <- readcdf(filepath, datavarname) %>% 
+                        transform_coords %>% 
+                        filter(id %in% gridpoint_indexes)
                     
                     alldata <- rbind(alldata, data.frame(
                         stationid=dataset$id, 
@@ -126,53 +159,46 @@ assembledata <- function(quantity) {
         }
     }
     
+    if (quantity == "cit") {
+        subset1 <- alldata %>%
+            filter(month == "feb" & day_cat == "unf") %>%
+            mutate(datapoint = 1)
+        subset2 <- alldata %>%
+            filter(month == "feb" & day_cat != "unf") %>%
+            mutate(datapoint = 0)
+        subset3 <- alldata %>%
+            filter(month != "feb") %>%
+            mutate(datapoint = datapoint / month_days[match(month, month_names)])
+        alldata <- rbind(subset1, subset2, subset3)
+    } else {
+        alldata <- mutate(alldata, datapoint = datapoint / month_days[match(month, month_names)])
+    }
+    
     return (alldata)
-}
-
-"A function to calculate min and max y position for errorbars in a stacked barplot"
-adderrorbars <- function(subset) {
-    means <- subset[subset$metric=="mean",]
-    prct10 <- subset[subset$metric=="10prct",]
-    prct90 <- subset[subset$metric=="90prct",]
-    means$prct10 <- prct10$datapoint
-    means$prct90 <- prct90$datapoint
-    
-    means_fair.mean <- filter(means, day_cat=="fair")$datapoint
-    means_good.mean <- filter(means, day_cat=="good")$datapoint
-    
-    means_fair <- filter(means, day_cat == "fair") %>%
-        mutate(lower = prct10,
-               upper = prct90)
-    
-    means_good <- filter(means, day_cat == "good") %>%
-        mutate(lower = means_fair.mean + prct10,
-               upper = means_fair.mean + prct90)
-    
-    means_unf <- filter(means, day_cat == "unf") %>%
-        mutate(lower = means_fair.mean + means_good.mean + prct10,
-               upper = means_fair.mean + means_good.mean + prct90)
-    
-    return (rbind(means_fair, means_good, means_unf))
 }
 
 "A function to plot data for specific point (`stat_id`) and scenario (`scen`). 
 To produce figures without errorbars, comment the line with `geom_errorbar()`."
 plotdata <- function(stat_id, scen, alldata) {
-    subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars()
+    subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars
+    
+    subset$day_cat <- factor(subset$day_cat, levels=c("unf", "fair", "good"))
+    subset$day_cat <- recode(subset$day_cat, unf="very poor", fair="marginal", good="ideal")
+    subset$month <- factor(subset$month, levels=month_names)
     
     p <- ggplot(data=subset,
-                mapping=aes(x=time_period, y=datapoint, fill=factor(day_cat, levels=c("unf", "good", "fair")))) +
+                mapping=aes(x=time_period, y=datapoint, fill=day_cat)) +
         geom_col() +
-        geom_errorbar(mapping=aes(ymax=upper, ymin=lower, color=factor(day_cat, levels=c("unf", "good", "fair"))), stat="identity", width=0.5) + # to disable errorbars comment this line
-        scale_colour_manual(values = c("#1C678D", "#AA5A00", "#006147"), guide="none") + # errorbar color
-        facet_grid(~factor(month, levels=month_names)) +
-        scale_y_continuous(expand = expansion(mult = c(0, 0.02)), breaks = c(0, 5, 10, 15, 20, 25, 30, 35)) +
+        geom_errorbar(mapping=aes(ymax=upper, ymin=lower, color=day_cat)) + # to disable errorbars comment this line
+        scale_colour_manual(values = c("#700000", "#000000", "#005137"), guide="none") + # errorbar color
+        facet_grid(~month) +
+        scale_y_continuous(expand = expansion(mult = c(0, 0.02)), labels = scales::percent_format(accuracy = 1)) +
         guides(x = guide_axis(angle = 90)) +
         labs(title=names[match(stat_id, gridpoint_indexes)],
              subtitle = scen, fill="CIT category") +
         xlab("period") +
-        ylab("days per month") +
-        scale_fill_manual(values = c("#4CACDC", "#EAAA00", "#009E73")) +
+        ylab("percentage of days per month") +
+        scale_fill_manual(values = c("#CD2E2E", "#EAAA00", "#009E73")) +
         theme(axis.text.x = element_text(size = 10), axis.text.y = element_text(size=10))
     
     return (p)

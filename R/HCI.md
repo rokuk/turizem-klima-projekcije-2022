@@ -23,10 +23,6 @@ source("common.R", local = knitr::knit_global())
     ## 
     ##     intersect, setdiff, setequal, union
 
-``` r
-library(ggplot2)
-```
-
 Read and process all data for HCI:
 
 ``` r
@@ -137,15 +133,15 @@ the count of days in `day_cat` category for a specific month and metric,
 head(all_hci_data)
 ```
 
-    ##   stationid   scenario time_period metric day_cat month datapoint
-    ## 1       661 historical   1986-2005   mean    fair   jan 16.941667
-    ## 2       661 historical   1986-2005   mean    fair   feb 13.875000
-    ## 3       661 historical   1986-2005   mean    fair   mar 11.141667
-    ## 4       661 historical   1986-2005   mean    fair   apr  7.383333
-    ## 5       661 historical   1986-2005   mean    fair   may  4.583333
-    ## 6       661 historical   1986-2005   mean    fair   jun  2.091667
+    ##   stationid   scenario time_period metric day_cat month  datapoint
+    ## 1       661 historical   1986-2005   mean    fair   jan 0.54650538
+    ## 2       661 historical   1986-2005   mean    fair   feb 0.49115044
+    ## 3       661 historical   1986-2005   mean    fair   mar 0.35940860
+    ## 4       661 historical   1986-2005   mean    fair   apr 0.24611111
+    ## 5       661 historical   1986-2005   mean    fair   may 0.14784946
+    ## 6       661 historical   1986-2005   mean    fair   jun 0.06972222
 
-## Plot
+## Plots
 
 Plot data for all stations and scenarios:
 
@@ -158,7 +154,7 @@ for (stat_id in gridpoint_indexes) {
 }
 ```
 
-![](HCI_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-5.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-6.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-7.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-8.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-9.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-10.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-11.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-12.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-13.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-14.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-15.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-16.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-17.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-18.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-19.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-20.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-21.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-22.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-23.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-24.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-25.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-26.png)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-27.png)<!-- -->
+![](HCI_files/figure-gfm/unnamed-chunk-4-1.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-2.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-3.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-4.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-5.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-6.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-7.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-8.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-9.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-10.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-11.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-12.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-13.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-14.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-15.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-16.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-17.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-18.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-19.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-20.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-21.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-22.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-23.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-24.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-25.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-26.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-27.svg)<!-- -->
 
 Save all the plots:
 
@@ -170,9 +166,10 @@ for (stat_id in gridpoint_indexes) {
 
         p <- plotdata(stat_id, scen, all_hci_data)
         
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/HCI")
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/HCI", dpi=500)
     }
 }
 ```

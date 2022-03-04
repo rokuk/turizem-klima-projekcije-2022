@@ -154,7 +154,7 @@ ggplot() +
     theme_light()
 ```
 
-![](Snow_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Snow_files/figure-gfm/unnamed-chunk-7-1.svg)<!-- -->
 
 ## Assemble data
 
@@ -408,78 +408,10 @@ for (i in 1:nrow(skidata)) {
 }
 ```
 
-``` r
-data_at_regions <- data.frame(matrix(ncol=7, nrow=0))
-ski_regions <- unique(skidata$nuts3id)
-
-for (i in 1:length(ski_regions)) {
-    selection <- filter(alldata, nuts3id==ski_regions[i])
-    
-    data_at_regions <- rbind(data_at_regions, data.frame(
-        regionid=ski_regions[i],
-        variable=selection[selection$metric=="Q50", "variable"],
-        scenario=factor(selection[selection$metric=="Q50", "scenario"], levels=c("historical", "RCP26", "RCP45", "RCP85")),
-        time_period=selection[selection$metric=="Q50", "time_period"],
-        height=factor(selection[selection$metric=="Q50", "height"], levels=heightlevels),
-        prct50=selection[selection$metric=="Q50", "datapoint"],
-        lower=selection[selection$metric=="Q10", "datapoint"],
-        upper=selection[selection$metric=="Q90", "datapoint"]
-    ))
-}
-```
-
 ## Plots
 
 ``` r
-plotdata1 <- function(resortname, var, data_at_skiresorts) {
-    lowest <- filter(skidata, ski_resort==resortname)$lowest
-    highest <- filter(skidata, ski_resort==resortname)$highest
-    if (highest > 1700) { # if highest point is higher than 1700 (max height in dataset), just use 1700 m
-        highest <- 1700
-    }
-    if (resortname == "Rogla" | resortname == "Pohorje") {
-        highest <- 1200
-    }
-
-    temp <- data_at_skiresorts %>% filter(name==resortname & variable==var & (height==lowest | height==highest))
-    temp$height <- fct_relabel(temp$height, ~ paste(.x, "m"))
-
-    p <- ggplot(temp, aes(x = time_period, y = prct50, fill = scenario)) +
-        geom_col(position = position_dodge2(width = 1, preserve = "single")) +
-        #geom_col(position = "dodge") +
-        facet_grid(~height) +
-        scale_fill_manual(values = c("#009E73", "#E69F00", "#56B4E9", "#D55E00")) +
-        labs(title = resortname, subtitle = var) +
-        geom_errorbar(mapping = aes(ymax=upper, ymin=lower), stat="identity", width=0.9, position = position_dodge2(preserve = "single"))
-    
-    return (p)
-}
-
-plotdata2 <- function(resortname, data_at_skiresorts) {
-    lowest <- filter(skidata, ski_resort==resortname)$lowest
-    highest <- filter(skidata, ski_resort==resortname)$highest
-    if (highest > 1700) { # if highest point is higher than 1700 (max height in dataset), just use 1700 m
-        highest <- 1700
-    }
-    if (resortname == "Rogla" | resortname == "Pohorje") {
-        highest <- 1200
-    }
-
-    temp <- data_at_skiresorts %>% filter(name==resortname & (height==lowest | height==highest))
-    temp$height <- fct_relabel(temp$height, ~ paste(.x, "m"))
-
-    p <- ggplot(temp, aes(x = time_period, y = prct50, fill = scenario)) +
-        geom_col(position = position_dodge2(width = 1, preserve = "single")) +
-        #geom_col(position = "dodge") +
-        facet_grid(variable~height, scales="free") +
-        scale_fill_manual(values = c("#009E73", "#E69F00", "#56B4E9", "#D55E00")) +
-        labs(title = resortname) +
-        geom_errorbar(mapping = aes(ymax=upper, ymin=lower), stat="identity", width=0.9, position = position_dodge2(preserve = "single"))
-    
-    return (p)
-}
-
-plotdata3 <- function(scen, var, data_at_skiresorts) {
+plotdata <- function(scen, var, data_at_skiresorts) {
     data_plot <- data.frame(matrix(nrow=0, ncol=8))
     
     for (resortname in skidata %>% pull(ski_resort)) {
@@ -522,37 +454,19 @@ plotdata3 <- function(scen, var, data_at_skiresorts) {
     return (p)
 }
 
-#plotdata1("Cerkno", "snowfall-amount-winter", data_at_skiresorts)
-#plotdata2("Cerkno", data_at_skiresorts)
-#plotdata3("RCP85", "snowfall-amount-winter", data_at_skiresorts)
-```
-
-``` r
-for (j in 1:nrow(skidata)) {
-    for (var in variables) {
-        p <- plotdata1(pull(skidata, ski_resort)[j], var, data_at_skiresorts)
-        print(p)
-    }
-}
-```
-
-``` r
-for (j in 1:nrow(skidata)) {
-    p <- plotdata2(pull(skidata, ski_resort)[j], data_at_skiresorts)
-    print(p)
-}
+#plotdata("RCP85", "snowfall-amount-winter", data_at_skiresorts)
 ```
 
 ``` r
 for (var in variables) {
     for (scen in scenarios) {
-        p <- plotdata3(scen, var, data_at_skiresorts)
+        p <- plotdata(scen, var, data_at_skiresorts)
         print(p)
     }
 }
 ```
 
-![](Snow_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-3.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-4.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-5.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-6.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-7.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-8.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-9.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-10.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-11.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-12.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-13.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-14.png)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-15-15.png)<!-- -->
+![](Snow_files/figure-gfm/unnamed-chunk-12-1.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-2.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-3.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-4.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-5.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-6.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-7.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-8.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-9.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-10.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-11.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-12.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-13.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-14.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-15.svg)<!-- -->
 
 Save all the plots:
 
@@ -561,11 +475,12 @@ for (scen in scenarios) {
     for (var in variables) {
         print(paste(scen, var))
 
-        p <- plotdata3(scen, var, data_at_skiresorts)
+        p <- plotdata(scen, var, data_at_skiresorts)
         
-        ggsave(paste("snow_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste("snow_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste("snow_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste("snow_", scen, "_", var, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/snow", device=cairo_pdf)
+        ggsave(paste("snow_", scen, "_", var, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/snow", device=cairo_ps)
+        ggsave(paste("snow_", scen, "_", var, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/snow")
+        ggsave(paste("snow_", scen, "_", var, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/snow", dpi=500)
     }
 }
 ```

@@ -10,13 +10,11 @@ under different RCP scenarios.
 
 ```{r}
 source("common.R", local = knitr::knit_global())
-
-library(ggplot2)
 ```
 
 Read and process all data for HCI:
 
-```{r cache=TRUE}
+```{r}
 all_hci_data <- assembledata("hci")
 ```
 
@@ -31,11 +29,11 @@ percentile, `day_cat` is either "fair", "good" or "unf" (category determined bas
 head(all_hci_data)
 ```
 
-## Plot
+## Plots
 
 Plot data for all stations and scenarios:
 
-```{r, dpi=300, fig.width=8, fig.height=4}
+```{r, fig.width=8, fig.height=4, dev='svg'}
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
         p <- plotdata(stat_id, scen, all_hci_data)
@@ -54,9 +52,10 @@ for (stat_id in gridpoint_indexes) {
 
         p <- plotdata(stat_id, scen, all_hci_data)
         
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/HCI")
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/HCI", dpi=500)
     }
 }
 ```

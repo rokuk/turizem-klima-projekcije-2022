@@ -10,13 +10,11 @@ under different RCP scenarios.
 
 ```{r}
 source("common.R", local = knitr::knit_global())
-
-library(ggplot2)
 ```
 
 Read and process all data for CIT:
 
-```{r cache=TRUE}
+```{r}
 all_cit_data <- assembledata("cit")
 ```
 
@@ -31,11 +29,11 @@ percentile, `day_cat` is either "fair", "good" or "unf" (category determined bas
 head(all_cit_data)
 ```
 
-## Plot
+## Plots
 
 Plot data for all stations and scenarios:
 
-```{r, dpi=300, fig.width=8, fig.height=4}
+```{r, fig.width=8, fig.height=4, dev='svg'}
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
         p <- plotdata(stat_id, scen, all_cit_data)
@@ -54,9 +52,10 @@ for (stat_id in gridpoint_indexes) {
 
         p <- plotdata(stat_id, scen, all_cit_data)
         
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_pdf)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output", device=cairo_ps)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output", dpi=500)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/CIT")
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/CIT", dpi=500)
     }
 }
 ```
