@@ -453,8 +453,6 @@ plotdata <- function(scen, var, data_at_skiresorts) {
         
     return (p)
 }
-
-#plotdata("RCP85", "snowfall-amount-winter", data_at_skiresorts)
 ```
 
 ``` r

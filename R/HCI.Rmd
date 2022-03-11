@@ -33,7 +33,7 @@ head(all_hci_data)
 
 Plot data for all stations and scenarios:
 
-```{r, fig.width=8, fig.height=4, dev='svg'}
+```{r, fig.width=9, fig.height=4, dev='svg'}
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
         p <- plotdata(stat_id, scen, all_hci_data)
@@ -52,10 +52,10 @@ for (stat_id in gridpoint_indexes) {
 
         p <- plotdata(stat_id, scen, all_hci_data)
         
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/HCI")
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/HCI", dpi=500)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/HCI")
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/HCI", dpi=500)
     }
 }
 ```

@@ -133,13 +133,13 @@ the count of days in `day_cat` category for a specific month and metric,
 head(all_hci_data)
 ```
 
-    ##   stationid   scenario time_period metric day_cat month  datapoint
-    ## 1       661 historical   1986-2005   mean    fair   jan 0.54650538
-    ## 2       661 historical   1986-2005   mean    fair   feb 0.49115044
-    ## 3       661 historical   1986-2005   mean    fair   mar 0.35940860
-    ## 4       661 historical   1986-2005   mean    fair   apr 0.24611111
-    ## 5       661 historical   1986-2005   mean    fair   may 0.14784946
-    ## 6       661 historical   1986-2005   mean    fair   jun 0.06972222
+    ##   stationid   scenario time_period metric day_cat month datapoint
+    ## 1       661 historical   1986-2005   mean    fair   jan 16.941667
+    ## 2       661 historical   1986-2005   mean    fair   feb 13.875000
+    ## 3       661 historical   1986-2005   mean    fair   mar 11.141667
+    ## 4       661 historical   1986-2005   mean    fair   apr  7.383333
+    ## 5       661 historical   1986-2005   mean    fair   may  4.583333
+    ## 6       661 historical   1986-2005   mean    fair   jun  2.091667
 
 ## Plots
 
@@ -166,10 +166,10 @@ for (stat_id in gridpoint_indexes) {
 
         p <- plotdata(stat_id, scen, all_hci_data)
         
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/HCI")
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/HCI", dpi=500)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/HCI")
+        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/HCI", dpi=500)
     }
 }
 ```

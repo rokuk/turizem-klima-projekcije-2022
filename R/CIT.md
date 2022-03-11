@@ -136,7 +136,7 @@ head(all_cit_data)
     ##   stationid   scenario time_period metric day_cat month datapoint
     ## 1       661 historical   1986-2005   mean     unf   feb         1
     ## 2       698 historical   1986-2005   mean     unf   feb         1
-    ## 3       706 historical   1986-2005   mean     unf   feb         1
+    ## 3       746 historical   1986-2005   mean     unf   feb         1
     ## 4       902 historical   1986-2005   mean     unf   feb         1
     ## 5      1060 historical   1986-2005   mean     unf   feb         1
     ## 6      1064 historical   1986-2005   mean     unf   feb         1
@@ -164,12 +164,12 @@ for (stat_id in gridpoint_indexes) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
         print(paste(stat_name, scen))
 
-        p <- plotdata(stat_id, scen, all_cit_data)
+        p <- plotdata(stat_id, scen, all_cit_data, tmp$sumcol)
         
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/CIT")
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/CIT", dpi=500)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/CIT")
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/CIT", dpi=500)
     }
 }
 ```

@@ -22,8 +22,7 @@ All relevant data is in `alldata`, where column `stationid` is the index of
 the grid point in the raw imported data, `scenario` is either "historical", 
 "RCP2.6", "RCP4.5" or "RCP8.5", `time_period` is either "1986-2005", "2021-2040", 
 "2041-2060" or "2081-2100", `metric` is the mean, 10th percentile or 90th 
-percentile, `day_cat` is either "fair", "good" or "unf" (category determined based on CIT value), `datapoint` is the count of days in `day_cat` category for a specific month and metric, 
-`month` is the month for which the datapoint was calculated.
+percentile, `day_cat` is either "fair", "good" or "unf" (category determined based on CIT value), `datapoint` is the count of days in `day_cat` category for a specific month and metric, `month` is the month for which the datapoint was calculated.
 
 ```{r}
 head(all_cit_data)
@@ -33,7 +32,7 @@ head(all_cit_data)
 
 Plot data for all stations and scenarios:
 
-```{r, fig.width=8, fig.height=4, dev='svg'}
+```{r, fig.width=9, fig.height=4, dev='svg'}
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
         p <- plotdata(stat_id, scen, all_cit_data)
@@ -50,12 +49,12 @@ for (stat_id in gridpoint_indexes) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
         print(paste(stat_name, scen))
 
-        p <- plotdata(stat_id, scen, all_cit_data)
+        p <- plotdata(stat_id, scen, all_cit_data, tmp$sumcol)
         
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/CIT")
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/CIT", dpi=500)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/CIT")
+        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/CIT", dpi=500)
     }
 }
 ```

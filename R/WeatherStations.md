@@ -216,9 +216,6 @@ plotdata2 <- function(alldata, variable, scen) {
     
     return (p)
 }
-
-#plotdata(alldata, "snow", "CELJE - MEDLOG")
-#plotdata2(alldata, "snow", "RCP4.5")
 ```
 
 ``` r
@@ -252,10 +249,10 @@ for (var in filenames) {
 
         p <- plotdata(alldata, var, stat_name)
         
-        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".pdf", sep=""), p, width=8, height=4, units="in", path="../output/pdf/arso", device=cairo_pdf)
-        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".eps", sep=""), p, width=8, height=4, units="in", path="../output/eps/arso", device=cairo_ps)
-        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".svg", sep=""), p, width=8, height=4, units="in", path="../output/svg/arso")
-        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".png", sep=""), p, width=8, height=4, units="in", path="../output/png/arso", dpi=500)
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/arso", device=cairo_pdf)
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/arso", device=cairo_ps)
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/arso")
+        ggsave(paste("arso1_", gsub(" ", "_", stat_name), "_", var, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/arso", dpi=500)
     }
 }
 ```
@@ -267,10 +264,10 @@ for (var in filenames) {
 
         p <- plotdata2(alldata, var, scen)
         
-        ggsave(paste("arso2_", scen, "_", var, ".pdf", sep=""), p, width=8, height=8, units="in", path="../output/pdf/arso", device=cairo_pdf)
-        ggsave(paste("arso2_", scen, "_", var, ".eps", sep=""), p, width=8, height=8, units="in", path="../output/eps/arso", device=cairo_ps)
-        ggsave(paste("arso2_", scen, "_", var, ".svg", sep=""), p, width=8, height=8, units="in", path="../output/svg/arso")
-        ggsave(paste("arso2_", scen, "_", var, ".png", sep=""), p, width=8, height=8, units="in", path="../output/png/arso", dpi=500)
+        ggsave(paste("arso2_", scen, "_", var, ".pdf", sep=""), p, width=9, height=8, units="in", path="../output/pdf/arso", device=cairo_pdf)
+        ggsave(paste("arso2_", scen, "_", var, ".eps", sep=""), p, width=9, height=8, units="in", path="../output/eps/arso", device=cairo_ps)
+        ggsave(paste("arso2_", scen, "_", var, ".svg", sep=""), p, width=9, height=8, units="in", path="../output/svg/arso")
+        ggsave(paste("arso2_", scen, "_", var, ".png", sep=""), p, width=9, height=8, units="in", path="../output/png/arso", dpi=500)
     }
 }
 ```

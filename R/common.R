@@ -75,9 +75,23 @@ transform_coords <- function(netcdfdata) {
 
 "A function to calculate min and max y position for errorbars in a stacked barplot"
 adderrorbars <- function(subset) {
-    means <- subset[subset$metric=="mean",]
-    prct10 <- subset[subset$metric=="10prct",]
-    prct90 <- subset[subset$metric=="90prct",]
+    # separate data into means 10th percentile, 90th percentile and normailze, so that stacked bars add to 1
+    
+    means <- subset %>%
+        filter(metric == "mean") %>%
+        group_by(scenario, time_period, month) %>%
+        mutate(sumcol = sum(datapoint),
+               datapoint = datapoint / sumcol) %>%
+        ungroup()
+    
+    prct90 <- filter(subset, metric == "90prct")
+    prct90$sumcol <- means$sumcol
+    prct90 <- mutate(prct90, datapoint = datapoint / sumcol)
+    
+    prct10 <- filter(subset, metric == "10prct")
+    prct10$sumcol <- means$sumcol
+    prct10 <- mutate(prct10, datapoint = datapoint / sumcol)
+    
     means$prct10 <- prct10$datapoint
     means$prct90 <- prct90$datapoint
     
@@ -153,7 +167,7 @@ assembledata <- function(quantity) {
                         metric=metric, 
                         day_cat=day_cat, 
                         month=dataset$month, 
-                    datapoint=dataset$datapoint))
+                        datapoint=dataset$datapoint))
                 }
             }
         }
@@ -163,15 +177,15 @@ assembledata <- function(quantity) {
         subset1 <- alldata %>%
             filter(month == "feb" & day_cat == "unf") %>%
             mutate(datapoint = 1)
+    
         subset2 <- alldata %>%
             filter(month == "feb" & day_cat != "unf") %>%
             mutate(datapoint = 0)
+    
         subset3 <- alldata %>%
-            filter(month != "feb") %>%
-            mutate(datapoint = datapoint / month_days[match(month, month_names)])
+            filter(month != "feb")
+    
         alldata <- rbind(subset1, subset2, subset3)
-    } else {
-        alldata <- mutate(alldata, datapoint = datapoint / month_days[match(month, month_names)])
     }
     
     return (alldata)
@@ -179,8 +193,8 @@ assembledata <- function(quantity) {
 
 "A function to plot data for specific point (`stat_id`) and scenario (`scen`). 
 To produce figures without errorbars, comment the line with `geom_errorbar()`."
-plotdata <- function(stat_id, scen, alldata) {
-    subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars
+plotdata <- function(stat_id, scen, alldata, sumcol) {
+    subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars()
     
     subset$day_cat <- factor(subset$day_cat, levels=c("unf", "fair", "good"))
     subset$day_cat <- recode(subset$day_cat, unf="very poor", fair="marginal", good="ideal")
@@ -190,7 +204,7 @@ plotdata <- function(stat_id, scen, alldata) {
                 mapping=aes(x=time_period, y=datapoint, fill=day_cat)) +
         geom_col() +
         geom_errorbar(mapping=aes(ymax=upper, ymin=lower, color=day_cat)) + # to disable errorbars comment this line
-        scale_colour_manual(values = c("#700000", "#000000", "#005137"), guide="none") + # errorbar color
+        scale_colour_manual(values = c("#490000", "#000000", "#005137"), guide="none") + # errorbar color
         facet_grid(~month) +
         scale_y_continuous(expand = expansion(mult = c(0, 0.02)), labels = scales::percent_format(accuracy = 1)) +
         guides(x = guide_axis(angle = 90)) +
@@ -198,7 +212,7 @@ plotdata <- function(stat_id, scen, alldata) {
              subtitle = scen, fill="CIT category") +
         xlab("period") +
         ylab("percentage of days per month") +
-        scale_fill_manual(values = c("#CD2E2E", "#EAAA00", "#009E73")) +
+        scale_fill_manual(values = c("#C04330", "#EAAA00", "#009E53")) +
         theme(axis.text.x = element_text(size = 10), axis.text.y = element_text(size=10))
     
     return (p)

@@ -34,7 +34,7 @@ grid <- transform_coords(netcdfdata)
 
 Plot june data centered on Slovenia, to check if we have selected the right rlon, rlat range:
 
-```{r, dpi=300}
+```{r, dev='svg'}
 image(netcdfdata$rlon, netcdfdata$rlat, netcdfdata$data[,,6])
 ```
 
@@ -42,7 +42,7 @@ image(netcdfdata$rlon, netcdfdata$rlat, netcdfdata$data[,,6])
 
 Plot map and a part of the model's grid:
 
-```{r, dpi=300}
+```{r, dev='svg'}
 ggplot(mapdata) +
     geom_sf() +
     coord_sf(xlim=c(7, 21), ylim=c(42, 50)) + 
@@ -66,10 +66,8 @@ names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Novo mesto", "Celje", "Slo
 gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347)
 
 chosen_gridpoints <- data.frame(
-    station_name = names,
-    point_index = gridpoint_indexes,
-    lon = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% select(lon),
-    lat = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% select(lat)
+    lon = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% pull(lon),
+    lat = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% pull(lat)
 )
 
 print(chosen_gridpoints)
@@ -77,7 +75,7 @@ print(chosen_gridpoints)
 
 Plot map of Slovenia, model grid (black), selected stations (red) and selected grid points (blue):
 
-```{r, dpi=300}
+```{r, dev='svg'}
 ggplot(mapdata) +
     geom_sf() +
     coord_sf(xlim=c(13.1, 16.6), ylim=c(45.3, 47)) + 

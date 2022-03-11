@@ -65,7 +65,7 @@ right rlon, rlat range:
 image(netcdfdata$rlon, netcdfdata$rlat, netcdfdata$data[,,6])
 ```
 
-![](CIT-HCI-gridpoints_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](CIT-HCI-gridpoints_files/figure-gfm/unnamed-chunk-4-1.svg)<!-- -->
 
 ## Selected points
 
@@ -81,7 +81,7 @@ ggplot(mapdata) +
     theme_dark()
 ```
 
-![](CIT-HCI-gridpoints_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](CIT-HCI-gridpoints_files/figure-gfm/unnamed-chunk-5-1.svg)<!-- -->
 
 Import coordinates of the stations we are interested in:
 
@@ -109,25 +109,23 @@ names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Novo mesto", "Celje", "Slo
 gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347)
 
 chosen_gridpoints <- data.frame(
-    station_name = names,
-    point_index = gridpoint_indexes,
-    lon = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% select(lon),
-    lat = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% select(lat)
+    lon = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% pull(lon),
+    lat = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% pull(lat)
 )
 
 print(chosen_gridpoints)
 ```
 
-    ##     station_name point_index      lon      lat
-    ## 1         Rateče         706 13.59662 45.87349
-    ## 2          Bilje         661 13.78092 45.55046
-    ## 3          Koper         698 13.70789 46.42899
-    ## 4      Ljubljana         902 14.53279 46.01841
-    ## 5     Novo mesto        1060 15.17597 45.81731
-    ## 6          Celje        1064 15.15160 46.25698
-    ## 7 Slovenj Gradec        1066 15.13927 46.47682
-    ## 8        Maribor        1186 15.61691 46.48851
-    ## 9  Murska Sobota        1347 16.25027 46.61075
+    ##        lon      lat
+    ## 1 13.59662 45.87349
+    ## 2 13.78092 45.55046
+    ## 3 13.70789 46.42899
+    ## 4 14.53279 46.01841
+    ## 5 15.17597 45.81731
+    ## 6 15.15160 46.25698
+    ## 7 15.13927 46.47682
+    ## 8 15.61691 46.48851
+    ## 9 16.25027 46.61075
 
 Plot map of Slovenia, model grid (black), selected stations (red) and
 selected grid points (blue):
@@ -144,4 +142,4 @@ ggplot(mapdata) +
     theme_dark()
 ```
 
-![](CIT-HCI-gridpoints_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](CIT-HCI-gridpoints_files/figure-gfm/unnamed-chunk-8-1.svg)<!-- -->
