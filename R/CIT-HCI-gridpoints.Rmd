@@ -15,6 +15,7 @@ source("common.R", local = knitr::knit_global())
 library(ggplot2)
 library(sf)
 library(rnaturalearth)
+library(ggspatial)
 ```
 
 Load country shape data for maps:
@@ -62,8 +63,8 @@ print(stationcoords)
 We manually choose points on the grid nearest to each station (where possible). The chosen points:
 
 ```{r}
-names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Novo mesto", "Celje", "Slovenj Gradec", "Maribor", "Murska Sobota")
-gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347)
+names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Cerklje na Gorenjskem", "Novo mesto", "Celje", "Slovenj Gradec", "Maribor", "Murska Sobota")
+gridpoint_indexes <- c(706, 661, 698, 902, 904, 1060, 1064, 1066, 1186, 1347)
 
 chosen_gridpoints <- data.frame(
     lon = grid %>% filter(grid$id %in% gridpoint_indexes & grid$month == "jan") %>% pull(lon),
@@ -76,13 +77,27 @@ print(chosen_gridpoints)
 Plot map of Slovenia, model grid (black), selected stations (red) and selected grid points (blue):
 
 ```{r, dev='svg'}
-ggplot(mapdata) +
+p <- ggplot(mapdata) +
     geom_sf() +
-    coord_sf(xlim=c(13.1, 16.6), ylim=c(45.3, 47)) + 
-    geom_point(data=grid, mapping = aes(lon, lat), size=0.2) +
-    geom_point(data=stationcoords, mapping = aes(lon, lat), color="#FF3000") +
-    geom_point(data=chosen_gridpoints, mapping = aes(lon, lat), color="#0062FF") +
+    geom_point(data=grid, mapping = aes(lon, lat, color="grid"), size=0.2) +
+    geom_point(data=stationcoords, mapping = aes(lon, lat, color="stations")) +
+    geom_point(data=chosen_gridpoints, mapping = aes(lon, lat, color="selectedgrid")) +
+    coord_sf(xlim=c(13.3, 16.6), ylim=c(45.4, 46.9), crs=4326) +
+    scale_color_manual(name="",
+values = c("grid" = "black", "stations" = "#EC3010", "selectedgrid" = "blue"),
+labels = c("Copernicus grid points", "selected ARSO stations", "selected grid points")) +
     xlab("longitude") +
     ylab("latitude") +
-    theme_dark()
+    labs(title = "Selected grid points and ARSO stations", color="Points") +
+    annotation_scale(location="br", pad_y = unit(0.5, "cm")) +
+    theme_dark() +
+    theme(legend.position="bottom", legend.key = element_blank(), legend.box.spacing=unit(0, "cm"))
+print(p)
+```
+
+```{r, eval=FALSE}
+ggsave("copernicus.pdf", p, width=6, height=4.5, units="in", path="../output/pdf/maps", device=cairo_pdf)
+ggsave("copernicus.eps", p, width=6, height=4.5, units="in", path="../output/eps/maps", device=cairo_ps)
+ggsave("copernicus.svg", p, width=6, height=4.5, units="in", path="../output/svg/maps")
+ggsave("copernicus.png", p, width=6, height=4.5, units="in", path="../output/png/maps", dpi=500)
 ```

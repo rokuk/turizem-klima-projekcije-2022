@@ -32,7 +32,7 @@ Define variable values:
 ``` r
 filenames <- c("rr1", "rr2", "snow", "warm", "hot", "tropical") # excel file names
 variablenames <- c("Days with at least 1 mm of precipitation", "Days with at least 20 mm of precipitation", "Days with snow", expression("Warm days (T"["max"]*" \u2265 25\u00B0C)"), expression("Hot days (T"["max"]*" \u2265 30\u00B0C)"), expression("Tropical nights (T"["min"]*" \u2265 20\u00B0C)")) # display variable names
-axislabels <- c("number of days per month", "number of days per month", "number of days per month", "number of days per month", "number of days per month", "number of nights per month")
+axislabels <- c("percentage of days per month", "percentage of days per month", "percentage of days per month", "percentage of days per month", "percentage of days per month", "percentage of nights per month")
 projnames <- c("RCP45", "RCP85", "RCP26") # excel sheet names
 scenarionames <- c("RCP4.5", "RCP8.5", "RCP2.6") # display scenario names
 monthnames <- c("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
@@ -165,6 +165,19 @@ refdata$scenario <- "RCP2.6"
 alldata <- rbind(alldata, refdata)
 ```
 
+Calculate percentages:
+
+``` r
+datadays31 <- filter(alldata, month == "jan" | month == "mar" | month == "may" | month == "jul" | month == "aug" | month == "oct" | month == "dec") %>% 
+    mutate(median = median / 31, min = min / 31, max = max / 31)
+datadays30 <- filter(alldata, month == "apr" | month == "jun" | month == "sep" | month == "nov") %>% mutate(median = median / 30, min = min / 30, max = max / 30)
+datadays28_1 <- filter(alldata, month == "feb" & period == "2011-2040") %>%
+    mutate(median = median / 28.2666666667, min = min / 28.2666666667, max = max / 28.2666666667)
+datadays28_2 <- filter(alldata, month == "feb" & period != "2011-2040") %>%
+    mutate(median = median / 28.2333333333, min = min / 28.2333333333, max = max / 28.2333333333)
+alldata <- rbind(datadays31, datadays30, datadays28_1, datadays28_2)
+```
+
 ## Plots
 
 ``` r
@@ -180,14 +193,16 @@ plotdata <- function(alldata, variable, stat) {
         geom_col() +
         facet_grid(scenario~month) + 
         scale_fill_manual(values = c("#009E73", "#E69F00", "#56B4E9", "#D55E00")) +
-        scale_y_continuous(expand = expansion(mult = c(0, 0.02))) +
+        scale_y_continuous(expand = expansion(mult = c(0, 0.02)),
+                           labels = scales::percent_format()) +
         ylab(axislabels[match(variable, filenames)]) + 
         labs(title = variablenames[match(variable, filenames)], subtitle = stationnames_1[match(stat, stationnames_raw)], fill="period") +
         geom_errorbar(mapping = aes(ymax=max, ymin=min), stat="identity", size=0.3, width=0.9) +
         theme(panel.grid.major.x = element_blank(),
               axis.title.x=element_blank(),
               axis.ticks.x=element_blank(),
-              axis.text.x=element_blank())
+              axis.text.x=element_blank(),
+              panel.spacing.y = unit(0.8, "lines"))
     
     return (p)
 }
@@ -204,7 +219,8 @@ plotdata2 <- function(alldata, variable, scen) {
         geom_col() +
         facet_grid(station~month, labeller = label_wrap_gen(width=10)) + 
         scale_fill_manual(values = c("#009E73", "#E69F00", "#56B4E9", "#D55E00")) +
-        scale_y_continuous(expand = expansion(mult = c(0, 0.02))) +
+        scale_y_continuous(expand = expansion(mult = c(0, 0.02)),
+                           labels = scales::percent_format(accuracy = 1)) +
         ylab(axislabels[match(variable, filenames)]) + 
         labs(title = variablenames[match(variable, filenames)], subtitle = scen, fill="period") +
         geom_errorbar(mapping = aes(ymax=max, ymin=min), stat="identity", size=0.3, width=0.9) +
@@ -212,7 +228,8 @@ plotdata2 <- function(alldata, variable, scen) {
               axis.title.x=element_blank(),
               axis.ticks.x=element_blank(),
               axis.text.x=element_blank(),
-              strip.text.y.right = element_text(angle = 0))
+              strip.text.y.right = element_text(angle = 0),
+              panel.spacing.y = unit(0.7, "lines"))
     
     return (p)
 }
@@ -227,7 +244,7 @@ for (var in filenames) {
 }
 ```
 
-![](WeatherStations_files/figure-gfm/unnamed-chunk-7-1.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-2.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-3.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-4.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-5.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-6.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-7.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-8.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-9.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-10.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-11.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-12.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-13.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-14.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-15.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-16.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-17.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-18.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-19.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-20.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-21.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-22.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-23.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-24.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-25.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-26.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-27.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-28.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-29.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-30.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-31.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-32.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-33.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-34.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-35.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-36.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-37.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-38.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-39.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-40.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-41.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-42.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-43.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-44.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-45.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-46.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-47.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-48.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-49.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-50.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-51.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-52.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-53.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-54.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-55.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-56.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-57.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-58.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-59.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-7-60.svg)<!-- -->
+![](WeatherStations_files/figure-gfm/unnamed-chunk-8-1.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-2.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-3.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-4.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-5.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-6.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-7.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-8.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-9.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-10.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-11.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-12.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-13.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-14.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-15.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-16.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-17.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-18.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-19.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-20.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-21.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-22.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-23.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-24.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-25.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-26.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-27.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-28.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-29.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-30.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-31.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-32.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-33.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-34.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-35.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-36.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-37.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-38.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-39.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-40.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-41.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-42.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-43.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-44.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-45.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-46.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-47.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-48.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-49.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-50.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-51.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-52.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-53.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-54.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-55.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-56.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-57.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-58.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-59.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-60.svg)<!-- -->
 
 ``` r
 for (var in filenames) {
@@ -238,7 +255,7 @@ for (var in filenames) {
 }
 ```
 
-![](WeatherStations_files/figure-gfm/unnamed-chunk-8-1.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-2.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-3.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-4.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-5.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-6.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-7.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-8.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-9.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-10.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-11.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-12.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-13.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-14.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-15.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-16.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-17.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-8-18.svg)<!-- -->
+![](WeatherStations_files/figure-gfm/unnamed-chunk-9-1.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-2.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-3.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-4.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-5.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-6.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-7.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-8.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-9.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-10.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-11.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-12.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-13.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-14.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-15.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-16.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-17.svg)<!-- -->![](WeatherStations_files/figure-gfm/unnamed-chunk-9-18.svg)<!-- -->
 
 Save all the plots:
 

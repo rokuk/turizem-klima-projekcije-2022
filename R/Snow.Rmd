@@ -16,6 +16,7 @@ library(ggplot2)
 library(sf)
 library(rnaturalearth)
 library(ggrepel)
+library(ggspatial)
 ```
 
 The dataset provides snow indicators at the scale of NUTS-3 regions.
@@ -83,16 +84,26 @@ print.data.frame(skidata)
 Plot Slovenian NUTS3 regions (black) and ski resort locations (red):
 
 ```{r, dev='svg'}
-ggplot() +
+p <- ggplot() +
     geom_sf(data=slovenia_nuts3_mapdata) +
     geom_point(data=skidata, mapping=aes(lon, lat), color="red") +
-    geom_label_repel(data=skidata, mapping=aes(lon, lat, label=ski_resort), min.segment.length = 0.2, box.padding = 0.2, color="brown", nudge_y = 46.68-skidata$lat, force=20) +
+    geom_label_repel(data=skidata, mapping=aes(lon, lat, label=ski_resort), min.segment.length = 0.2, box.padding = 0.3, color="brown", nudge_y = 46.66-skidata$lat, force=2) +
     geom_point(data=regions, mapping=aes(lon, lat)) +
     geom_label(data=regions, mapping=aes(lon, lat, label=name), nudge_y = -0.055, size = 2.5) +
     coord_sf(crs = st_crs(4326)) +
     xlab("longitude") +
     ylab("latitude") +
+    ggtitle("NUTS-3 regions and selected ski resorts") +
+    annotation_scale(location="br", pad_y = unit(0.5, "cm")) +
     theme_light()
+print(p)
+```
+
+```{r, eval=FALSE}
+ggsave("snow.pdf", p, width=6, height=4.5, units="in", path="../output/pdf/maps", device=cairo_pdf)
+ggsave("snow.eps", p, width=6, height=4.5, units="in", path="../output/eps/maps", device=cairo_ps)
+ggsave("snow.svg", p, width=6, height=4.5, units="in", path="../output/svg/maps")
+ggsave("snow.png", p, width=6, height=4.5, units="in", path="../output/png/maps", dpi=500)
 ```
 
 ## Assemble data
@@ -114,7 +125,7 @@ yaxislabels <- c("number of days", "number of days", "cumulative snowfall [mm]",
 
 Read data from netcdf files:
 
-```{r, cache=TRUE}
+```{r}
 alldata <- data.frame(matrix(ncol = 7, nrow = 0)) # create empty dataframe
 
 # read and extract historical data

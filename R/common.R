@@ -12,8 +12,8 @@ time_periods <- c("2021_2040", "2041_2060", "2081_2100")
 day_categories <- c("fair", "good", "unf")
 metrics <- c("mean", "10prct", "90prct")
 
-names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Novo mesto", "Celje", "Slovenj Gradec", "Maribor", "Murska Sobota")
-gridpoint_indexes <- c(706, 661, 698, 902, 1060, 1064, 1066, 1186, 1347) # these points of the grid are manualy chosen, see CIT-HCI-gridpoints file
+names <- c("Rateče", "Bilje", "Koper", "Ljubljana", "Cerklje na Gorenjskem", "Novo mesto", "Celje", "Slovenj Gradec", "Maribor", "Murska Sobota")
+gridpoint_indexes <- c(706, 661, 698, 902, 904, 1060, 1064, 1066, 1186, 1347) # these points of the grid are manualy chosen, see CIT-HCI-gridpoints file
 
 "The datasets downloaded from CDS are saved in netcdf files. We define a 
 function that opens the file, reads longitude, latitude, rotated longitude, 
@@ -193,7 +193,7 @@ assembledata <- function(quantity) {
 
 "A function to plot data for specific point (`stat_id`) and scenario (`scen`). 
 To produce figures without errorbars, comment the line with `geom_errorbar()`."
-plotdata <- function(stat_id, scen, alldata, sumcol) {
+plotcitdata <- function(stat_id, scen, alldata) {
     subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars()
     
     subset$day_cat <- factor(subset$day_cat, levels=c("unf", "fair", "good"))
@@ -206,14 +206,49 @@ plotdata <- function(stat_id, scen, alldata, sumcol) {
         geom_errorbar(mapping=aes(ymax=upper, ymin=lower, color=day_cat)) + # to disable errorbars comment this line
         scale_colour_manual(values = c("#490000", "#000000", "#005137"), guide="none") + # errorbar color
         facet_grid(~month) +
-        scale_y_continuous(expand = expansion(mult = c(0, 0.02)), labels = scales::percent_format(accuracy = 1)) +
+        scale_y_continuous(expand = expansion(mult = c(0, 0.02)), 
+                           breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1),
+                           labels = scales::percent_format(accuracy = 1)) +
         guides(x = guide_axis(angle = 90)) +
         labs(title=names[match(stat_id, gridpoint_indexes)],
-             subtitle = scen, fill="CIT category") +
+             subtitle = paste("Copernicus - CIT: 3S -", scen), fill="CIT category") +
         xlab("period") +
         ylab("percentage of days per month") +
         scale_fill_manual(values = c("#C04330", "#EAAA00", "#009E53")) +
-        theme(axis.text.x = element_text(size = 10), axis.text.y = element_text(size=10))
+        theme(axis.text.x = element_text(size = 10), 
+              axis.text.y = element_text(size=10),
+              panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank())
+    
+    return (p)
+}
+
+plothcidata <- function(stat_id, scen, alldata) {
+    subset <- filter(alldata, stationid == stat_id & (scenario == scen | scenario == "historical")) %>% adderrorbars()
+    
+    subset$day_cat <- factor(subset$day_cat, levels=c("unf", "fair", "good"))
+    subset$day_cat <- recode(subset$day_cat, unf="very poor", fair="marginal", good="ideal")
+    subset$month <- factor(subset$month, levels=month_names)
+    
+    p <- ggplot(data=subset,
+                mapping=aes(x=time_period, y=datapoint, fill=day_cat)) +
+        geom_col() +
+        geom_errorbar(mapping=aes(ymax=upper, ymin=lower, color=day_cat)) + # to disable errorbars comment this line
+        scale_colour_manual(values = c("#490000", "#000000", "#005137"), guide="none") + # errorbar color
+        facet_grid(~month) +
+        scale_y_continuous(expand = expansion(mult = c(0, 0.02)), 
+                           breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1),
+                           labels = scales::percent_format(accuracy = 1)) +
+        guides(x = guide_axis(angle = 90)) +
+        labs(title=names[match(stat_id, gridpoint_indexes)],
+             subtitle = paste("Copernicus - HCI:Urban -", scen), fill="HCI category") +
+        xlab("period") +
+        ylab("percentage of days per month") +
+        scale_fill_manual(values = c("#C04330", "#EAAA00", "#009E53")) +
+        theme(axis.text.x = element_text(size = 10),
+              axis.text.y = element_text(size = 10),
+              panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank())
     
     return (p)
 }

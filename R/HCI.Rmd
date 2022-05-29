@@ -36,7 +36,7 @@ Plot data for all stations and scenarios:
 ```{r, fig.width=9, fig.height=4, dev='svg'}
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
-        p <- plotdata(stat_id, scen, all_hci_data)
+        p <- plothcidata(stat_id, scen, all_hci_data)
         print(p)
     }
 }
@@ -50,12 +50,12 @@ for (stat_id in gridpoint_indexes) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
         print(paste("HCI", stat_name, scen))
 
-        p <- plotdata(stat_id, scen, all_hci_data)
+        p <- plothcidata(stat_id, scen, all_hci_data)
         
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/HCI")
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/HCI", dpi=500)
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/copernicus-HCI", device=cairo_pdf)
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/copernicus-HCI", device=cairo_ps)
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/copernicus-HCI")
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/copernicus-HCI", dpi=500)
     }
 }
 ```

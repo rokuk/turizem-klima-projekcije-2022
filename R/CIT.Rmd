@@ -35,7 +35,7 @@ Plot data for all stations and scenarios:
 ```{r, fig.width=9, fig.height=4, dev='svg'}
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
-        p <- plotdata(stat_id, scen, all_cit_data)
+        p <- plotcitdata(stat_id, scen, all_cit_data)
         print(p)
     }
 }
@@ -49,12 +49,12 @@ for (stat_id in gridpoint_indexes) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
         print(paste(stat_name, scen))
 
-        p <- plotdata(stat_id, scen, all_cit_data, tmp$sumcol)
+        p <- plotcitdata(stat_id, scen, all_cit_data)
         
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/CIT")
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/CIT", dpi=500)
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/copernicus-CIT", device=cairo_pdf)
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/copernicus-CIT", device=cairo_ps)
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/copernicus-CIT")
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/copernicus-CIT", dpi=500)
     }
 }
 ```

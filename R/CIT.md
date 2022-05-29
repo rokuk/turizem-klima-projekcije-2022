@@ -136,10 +136,10 @@ head(all_cit_data)
     ##   stationid   scenario time_period metric day_cat month datapoint
     ## 1       661 historical   1986-2005   mean     unf   feb         1
     ## 2       698 historical   1986-2005   mean     unf   feb         1
-    ## 3       746 historical   1986-2005   mean     unf   feb         1
+    ## 3       706 historical   1986-2005   mean     unf   feb         1
     ## 4       902 historical   1986-2005   mean     unf   feb         1
-    ## 5      1060 historical   1986-2005   mean     unf   feb         1
-    ## 6      1064 historical   1986-2005   mean     unf   feb         1
+    ## 5       904 historical   1986-2005   mean     unf   feb         1
+    ## 6      1060 historical   1986-2005   mean     unf   feb         1
 
 ## Plots
 
@@ -148,13 +148,13 @@ Plot data for all stations and scenarios:
 ``` r
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
-        p <- plotdata(stat_id, scen, all_cit_data)
+        p <- plotcitdata(stat_id, scen, all_cit_data)
         print(p)
     }
 }
 ```
 
-![](CIT_files/figure-gfm/unnamed-chunk-4-1.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-2.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-3.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-4.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-5.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-6.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-7.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-8.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-9.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-10.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-11.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-12.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-13.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-14.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-15.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-16.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-17.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-18.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-19.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-20.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-21.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-22.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-23.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-24.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-25.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-26.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-27.svg)<!-- -->
+![](CIT_files/figure-gfm/unnamed-chunk-4-1.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-2.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-3.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-4.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-5.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-6.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-7.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-8.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-9.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-10.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-11.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-12.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-13.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-14.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-15.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-16.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-17.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-18.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-19.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-20.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-21.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-22.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-23.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-24.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-25.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-26.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-27.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-28.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-29.svg)<!-- -->![](CIT_files/figure-gfm/unnamed-chunk-4-30.svg)<!-- -->
 
 Save all the plots:
 
@@ -164,12 +164,12 @@ for (stat_id in gridpoint_indexes) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
         print(paste(stat_name, scen))
 
-        p <- plotdata(stat_id, scen, all_cit_data, tmp$sumcol)
+        p <- plotcitdata(stat_id, scen, all_cit_data)
         
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/CIT", device=cairo_pdf)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/CIT", device=cairo_ps)
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/CIT")
-        ggsave(paste("CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/CIT", dpi=500)
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/copernicus-CIT", device=cairo_pdf)
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/copernicus-CIT", device=cairo_ps)
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/copernicus-CIT")
+        ggsave(paste("copernicus-CIT_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/copernicus-CIT", dpi=500)
     }
 }
 ```

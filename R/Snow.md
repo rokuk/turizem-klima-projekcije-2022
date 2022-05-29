@@ -35,6 +35,7 @@ library(sf)
 ``` r
 library(rnaturalearth)
 library(ggrepel)
+library(ggspatial)
 ```
 
 The dataset provides snow indicators at the scale of NUTS-3 regions.
@@ -142,19 +143,29 @@ print.data.frame(skidata)
 Plot Slovenian NUTS3 regions (black) and ski resort locations (red):
 
 ``` r
-ggplot() +
+p <- ggplot() +
     geom_sf(data=slovenia_nuts3_mapdata) +
     geom_point(data=skidata, mapping=aes(lon, lat), color="red") +
-    geom_label_repel(data=skidata, mapping=aes(lon, lat, label=ski_resort), min.segment.length = 0.2, box.padding = 0.2, color="brown", nudge_y = 46.68-skidata$lat, force=20) +
+    geom_label_repel(data=skidata, mapping=aes(lon, lat, label=ski_resort), min.segment.length = 0.2, box.padding = 0.3, color="brown", nudge_y = 46.66-skidata$lat, force=2) +
     geom_point(data=regions, mapping=aes(lon, lat)) +
     geom_label(data=regions, mapping=aes(lon, lat, label=name), nudge_y = -0.055, size = 2.5) +
     coord_sf(crs = st_crs(4326)) +
     xlab("longitude") +
     ylab("latitude") +
+    ggtitle("NUTS-3 regions and selected ski resorts") +
+    annotation_scale(location="br", pad_y = unit(0.5, "cm")) +
     theme_light()
+print(p)
 ```
 
 ![](Snow_files/figure-gfm/unnamed-chunk-7-1.svg)<!-- -->
+
+``` r
+ggsave("snow.pdf", p, width=6, height=4.5, units="in", path="../output/pdf/maps", device=cairo_pdf)
+ggsave("snow.eps", p, width=6, height=4.5, units="in", path="../output/eps/maps", device=cairo_ps)
+ggsave("snow.svg", p, width=6, height=4.5, units="in", path="../output/svg/maps")
+ggsave("snow.png", p, width=6, height=4.5, units="in", path="../output/png/maps", dpi=500)
+```
 
 ## Assemble data
 
@@ -464,7 +475,7 @@ for (var in variables) {
 }
 ```
 
-![](Snow_files/figure-gfm/unnamed-chunk-12-1.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-2.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-3.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-4.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-5.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-6.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-7.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-8.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-9.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-10.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-11.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-12.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-13.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-14.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-12-15.svg)<!-- -->
+![](Snow_files/figure-gfm/unnamed-chunk-13-1.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-2.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-3.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-4.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-5.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-6.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-7.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-8.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-9.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-10.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-11.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-12.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-13.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-14.svg)<!-- -->![](Snow_files/figure-gfm/unnamed-chunk-13-15.svg)<!-- -->
 
 Save all the plots:
 

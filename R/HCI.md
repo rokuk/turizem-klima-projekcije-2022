@@ -148,13 +148,13 @@ Plot data for all stations and scenarios:
 ``` r
 for (stat_id in gridpoint_indexes) {
     for (scen in scenarios) {
-        p <- plotdata(stat_id, scen, all_hci_data)
+        p <- plothcidata(stat_id, scen, all_hci_data)
         print(p)
     }
 }
 ```
 
-![](HCI_files/figure-gfm/unnamed-chunk-4-1.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-2.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-3.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-4.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-5.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-6.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-7.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-8.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-9.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-10.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-11.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-12.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-13.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-14.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-15.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-16.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-17.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-18.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-19.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-20.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-21.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-22.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-23.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-24.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-25.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-26.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-27.svg)<!-- -->
+![](HCI_files/figure-gfm/unnamed-chunk-4-1.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-2.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-3.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-4.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-5.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-6.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-7.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-8.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-9.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-10.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-11.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-12.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-13.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-14.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-15.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-16.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-17.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-18.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-19.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-20.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-21.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-22.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-23.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-24.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-25.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-26.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-27.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-28.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-29.svg)<!-- -->![](HCI_files/figure-gfm/unnamed-chunk-4-30.svg)<!-- -->
 
 Save all the plots:
 
@@ -164,12 +164,12 @@ for (stat_id in gridpoint_indexes) {
         stat_name <- names[match(stat_id, gridpoint_indexes)]
         print(paste("HCI", stat_name, scen))
 
-        p <- plotdata(stat_id, scen, all_hci_data)
+        p <- plothcidata(stat_id, scen, all_hci_data)
         
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/HCI", device=cairo_pdf)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/HCI", device=cairo_ps)
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/HCI")
-        ggsave(paste("HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/HCI", dpi=500)
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".pdf", sep=""), p, width=9, height=4, units="in", path="../output/pdf/copernicus-HCI", device=cairo_pdf)
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".eps", sep=""), p, width=9, height=4, units="in", path="../output/eps/copernicus-HCI", device=cairo_ps)
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".svg", sep=""), p, width=9, height=4, units="in", path="../output/svg/copernicus-HCI")
+        ggsave(paste("copernicus-HCI_", gsub(" ", "_", stat_name), "_", scen, ".png", sep=""), p, width=9, height=4, units="in", path="../output/png/copernicus-HCI", dpi=500)
     }
 }
 ```
